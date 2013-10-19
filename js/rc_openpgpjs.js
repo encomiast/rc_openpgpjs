@@ -116,21 +116,21 @@ if(window.rcmail) {
       var senderAddress = rcmail.env.sender.match(/[A-Za-z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+/);
       if(!senderAddress || !senderAddress.length) {
         // In the case of a bogus sender name/address, throw an error
-        rcmail.display_message('CAUTION: Could not verify signature -- no valid sender email address recognized', 'error');
+        displayUserMessage('Could not verify signature -- no valid sender email address recognized', 'notice');
         return false;
       }
       senderAddress = senderAddress[0];
       var pubkeys = getPubkeyForAddress(senderAddress);
       if(!pubkeys.length) {
-        rcmail.display_message('CAUTION: Could not verify signature -- no public key found for ' + senderAddress, 'error');
+        displayUserMessage('Could not verify signature -- no public key found for ' + senderAddress, 'notice');
         return false;
       }
       if(verify(msg, pubkeys)) {
-        rcmail.display_message('Signature valid: ' + senderAddress, 'confirmation');
+        displayUserMessage('Signature valid: ' + senderAddress, 'confirmation');
         $("#messagebody div.message-part pre").html("<strong>********* *BEGIN SIGNED PART* *********</strong>\n" + escapeHtml(msg[0].text) + "\n<strong>********** *END SIGNED PART* **********</strong>");
         return true;
       } else {
-        rcmail.display_message('CAUTION: Invalid signature', 'error');
+        displayUserMessage('CAUTION: Invalid signature', 'error');
         return false;
       }
     }
@@ -760,4 +760,15 @@ if(window.rcmail) {
   }
 
   function showMessages(msg) { console.log(msg); }
+
+  /**
+   * Display a custom message above the email pane
+   *
+   * @param msg  {String} Message to display
+   * @param type {String} One of 'confirmation', 'notice', 'error'
+   */
+  function displayUserMessage(msg, type) {
+    // Insert a div into the message-objects <div> provided by Roundcube
+    $('<div class="' + type + ' messagepadding">' + escapeHtml(msg) + '</div>').appendTo($('#message-objects'));
+  }
 }
