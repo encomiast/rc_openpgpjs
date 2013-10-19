@@ -769,6 +769,6 @@ if(window.rcmail) {
    */
   function displayUserMessage(msg, type) {
     // Insert a div into the message-objects <div> provided by Roundcube
-    $('<div class="' + type + ' messagepadding">' + escapeHtml(msg) + '</div>').appendTo($('#message-objects'));
+    $('<div>').text(msg).addClass(type).addClass('messagepadding').appendTo($('#message-objects'));
   }
 }
